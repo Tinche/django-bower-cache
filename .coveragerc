@@ -1,3 +1,2 @@
 [run]
 source = registry
-omit = registry.project_template

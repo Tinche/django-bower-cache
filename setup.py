@@ -17,8 +17,7 @@ if sys.argv[-1] == 'publish':
     print(" git push --tags")
     sys.exit()
 
-readme = open('README.md').read()
-
+with open('README.md') as f: readme = f.read()
 
 class PyTest(TestCommand):
     def finalize_options(self):
@@ -55,8 +54,7 @@ install_requires = [
     'djangorestframework >= 2.3.12, < 2.4',
     'envoy==0.0.2',
     'requests==2.2.1',
-    'django-celery==3.1.10',
-    'dj-static==0.0.5',
+    'celery==3.1.10',
 ]
 
 tests_require = [
@@ -70,17 +68,14 @@ if sys.version_info[0] == 2:
     tests_require.append('mock==1.0.1')
 
 setup(
-    name='bower-cache',
+    name='django-bower-cache',
     version=VERSION,
-    description='A local caching proxy for Bower packages.',
+    description='A Django app implementing a local caching proxy for Bower packages.',
     long_description=readme + '\n\n',
     author='Tin Tvrtkovic',
     author_email='tinchester@gmail.com',
-    url='https://github.com/tinche/bower-cache',
-    packages=['registry', 'registry.commands'],
-    entry_points={
-        'console_scripts': ['bower-cache-init = registry.commands:init_site'],
-    },
+    url='https://github.com/tinche/django-bower-cache',
+    packages=['registry'],
     include_package_data=True,
     install_requires=install_requires,
     tests_require=tests_require,

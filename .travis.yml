@@ -5,8 +5,6 @@ python:
 before_install:
     - sudo apt-get update -qq
     - sudo apt-get install -qq git
-before_script:
-    - bash -c 'sudo mkdir /var/git; sudo chown $USER /var/git'
 script: python setup.py coverage
 after_success:
     - pip install python-coveralls && coveralls
