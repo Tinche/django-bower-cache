@@ -11,8 +11,6 @@ SECRET_KEY = 'r30*fwaj6#%^*_i@@ges__+4g$79-v=dd5a^l75$%_b@35m^yu'
 # Celery settings.
 BROKER_URL = 'django://'
 CELERYBEAT_SCHEDULER = "djcelery.schedulers.DatabaseScheduler"
-import djcelery
-djcelery.setup_loader()
 
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG

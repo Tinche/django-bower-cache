@@ -61,6 +61,7 @@ tests_require = [
     'pytest-django',
     'coverage',
     'beautifulsoup4',
+    'django-celery',
 ]
 
 if sys.version_info[0] == 2:
