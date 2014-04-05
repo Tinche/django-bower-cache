@@ -1,6 +1,10 @@
-import json
+from __future__ import absolute_import
 
-from test_registry._compat import mock
+import json
+import tempfile
+import shutil
+
+from ._compat import mock
 
 from registry.models import Package
 
@@ -30,6 +34,13 @@ class PackagesListViewTests(TestCase):
 
 
 class PackagesFindViewTests(TestCase):
+
+    def setUp(self):
+        temp_repo_root = tempfile.mkdtemp()
+        settings.REPO_ROOT = temp_repo_root
+
+    def tearDown(self):
+        shutil.rmtree(settings.REPO_ROOT)
 
     def test_returns_package_by_name(self):
         Package.objects.create(name="ember", url="/foo")
@@ -93,7 +104,15 @@ class PackagesFindViewTests(TestCase):
         self.assertEqual(result['name'], u'ember-data')
 
 
+@override_settings()
 class PackagesSearchViewTests(TestCase):
+
+    def setUp(self):
+        temp_repo_root = tempfile.mkdtemp()
+        settings.REPO_ROOT = temp_repo_root
+
+    def tearDown(self):
+        shutil.rmtree(settings.REPO_ROOT)
 
     def test_returns_list_of_packages_when_search_finds_match(self):
         Package.objects.create(name="ember", url="/foo")

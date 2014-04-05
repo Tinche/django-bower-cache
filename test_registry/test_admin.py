@@ -89,12 +89,13 @@ def test_cloned_repo_view(pull_from_origin, tmpdir, settings, admin_client):
     assert b'Add cloned repo' in resp.content
 
 
-def test_add_repo_no_origin(admin_client):
+def test_add_repo_no_origin(tmpdir, settings, admin_client):
     """Test submitting a cloned repo with origin_source and without an origin_
     url.
 
     This test doesn't reach out to external services.
     """
+    settings.REPO_ROOT = str(tmpdir)
     # Add a package through the form.
     resp = admin_client.post('/admin/registry/clonedrepo/add/',
                             {'name': 'angular', 'origin_source': 'origin_url'})
@@ -135,11 +136,13 @@ def test_add_git_error(clone_from, tmpdir, settings, admin_client):
 
 
 @mock.patch('registry.bowerlib.get_package')
-def test_add_repo_bower_error(get_package, admin_client):
+def test_add_repo_bower_error(get_package, tmpdir, settings, admin_client):
     """Test submitting a cloned repo, and Bower returning an IO error.
 
     This test doesn't reach out to external services.
     """
+    settings.REPO_ROOT = str(tmpdir)
+
     get_package.side_effect = IOError("An IO Error occured.")
     # Add a package through the form.
     resp = admin_client.post('/admin/registry/clonedrepo/add/',
