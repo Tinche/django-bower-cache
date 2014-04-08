@@ -7,4 +7,4 @@ before_install:
     - sudo apt-get install -qq git
 script: python setup.py coverage
 after_success:
-    - pip install python-coveralls && coveralls
+    - pip install coveralls && coveralls
