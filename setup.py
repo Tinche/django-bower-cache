@@ -54,7 +54,7 @@ install_requires = [
     'djangorestframework >= 2.3.12, < 2.4',
     'envoy==0.0.2',
     'requests==2.2.1',
-    'celery==3.1.10',
+    'celery==3.1.11',
 ]
 
 tests_require = [
