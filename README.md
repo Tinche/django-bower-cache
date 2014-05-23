@@ -15,6 +15,8 @@ If you just want a simple way to run a local Bower caching proxy, see the
 [Bower Cache](https://github.com/Tinche/bower-cache) project, which is built around Django Bower
 Cache.
 
+Django Bower Cache supports Python 2.6, 2.7 and PyPy.
+
 ## Settings
 
 Django Bower Cache uses three additional settings from the Django settings file.
