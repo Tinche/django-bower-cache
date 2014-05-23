@@ -2,6 +2,8 @@ from __future__ import absolute_import
 
 import json
 import tempfile
+import envoy
+from os import path
 import shutil
 
 from ._compat import mock
@@ -34,6 +36,7 @@ class PackagesListViewTests(TestCase):
 
 
 class PackagesFindViewTests(TestCase):
+    """Tests for retrieving an individual package."""
 
     def setUp(self):
         temp_repo_root = tempfile.mkdtemp()
@@ -51,8 +54,48 @@ class PackagesFindViewTests(TestCase):
         self.assertEqual(result['url'], u'/foo')
         self.assertEqual(result['name'], u'ember')
 
+    def test_returns_cloned_repo_by_name(self):
+        """Test proper handling of existent cloned repos."""
+        # Need to set up a git repo with origin info.
+        full_path = path.join(settings.REPO_ROOT, 'test')
+        envoy.run('git init {0}'.format(full_path))
+        fake_origin = 'git://localhost'
+        envoy.run('git -C {0} remote add origin {1}'.format(full_path,
+                                                            fake_origin))
+        url = reverse("find", kwargs={'name': 'test'})
+        response = self.client.get(url)
+        self.assertEqual(200, response.status_code)
+        result = json.loads(response.content.decode())
+        expected_url = settings.REPO_URL + u'test'
+        self.assertEqual(result['url'], expected_url)
+        self.assertEqual(result['name'], u'test')
+
+    def test_returns_cloned_repo_by_name_auto_host(self):
+        """Test proper handling of existent cloned repos.
+
+        The settings.REPO_URL option isn't set, so we'll parse the host info
+        from the request.
+        """
+        # Need to set up a git repo with origin info.
+        full_path = path.join(settings.REPO_ROOT, 'test')
+        envoy.run('git init {0}'.format(full_path))
+        fake_origin = 'git://localhost'
+        envoy.run('git -C {0} remote add origin {1}'.format(full_path,
+                                                            fake_origin))
+        url = reverse("find", kwargs={'name': 'test'})
+
+        del settings.REPO_URL
+
+        response = self.client.get(url, HTTP_HOST='test-host')
+
+        self.assertEqual(200, response.status_code)
+        result = json.loads(response.content.decode())
+        expected_url = 'git://test-host/test'
+        self.assertEqual(result['url'], expected_url)
+        self.assertEqual(result['name'], u'test')
+
     @mock.patch('registry.bowerlib.get_package')
-    def test_returns_404_when_package_name_not_found(self, get_package):
+    def test_unknown_nonexistent(self, get_package):
         # Mock the bowerlib.get_package method to avoid I/O
         # We pretend Bower has never heard of 'wat'
         get_package.return_value = None

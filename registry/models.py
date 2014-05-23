@@ -11,6 +11,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 class Package(models.Model):
     """A Bower package, known to the registry but not hosted by it."""
     name = models.CharField(max_length=500, db_index=True, unique=True)
@@ -41,9 +42,8 @@ class ClonedRepo(models.Model):
         repo_root = settings.REPO_ROOT
         pull_from_origin(join(repo_root, self.name))
 
-    def to_package(self):
+    def to_package(self, repo_url):
         """Return the package representation of this repo."""
-        repo_url = settings.REPO_URL
         return Package(name=self.name, url=repo_url + self.name)
 
     def __str__(self):

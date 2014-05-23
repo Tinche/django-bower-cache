@@ -8,7 +8,7 @@ from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand
 
 
-VERSION = '0.1.3'
+VERSION = '0.1.4'
 
 if sys.argv[-1] == 'publish':
     os.system('python setup.py sdist upload')
@@ -52,9 +52,9 @@ class Coverage(TestCommand):
 install_requires = [
     'Django >= 1.6, < 1.7',
     'djangorestframework >= 2.3.12, < 2.4',
-    'envoy==0.0.2',
-    'requests==2.2.1',
-    'celery==3.1.11',
+    'envoy >= 0.0.2, < 0.1',
+    'requests >= 2.3.0, < 2.4.0',
+    'celery >= 3.1.11, < 3.2',
 ]
 
 tests_require = [
@@ -93,5 +93,6 @@ setup(
         "Programming Language :: Python :: 2",
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: Implementation :: PyPy',
     ],
 )

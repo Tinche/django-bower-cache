@@ -5,8 +5,10 @@ from django.http import Http404
 from django.conf import settings
 from rest_framework import status
 from rest_framework.exceptions import APIException
-from rest_framework.generics import (ListAPIView, ListCreateAPIView,
-                                     RetrieveAPIView)
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView, ListCreateAPIView, \
+    GenericAPIView
 
 from .models import Package, ClonedRepo
 from .serializers import PackageSerializer
@@ -33,28 +35,48 @@ class PackagesSearchView(ListAPIView):
         return self.model.objects.filter(name__icontains=search)
 
 
-class PackagesRetrieveView(RetrieveAPIView):
-    model = Package
+class PackagesRetrieveView(APIView):
     serializer_class = PackageSerializer
+    DEFAULT_GIT_REPO_PAT = u"git://{0}/"
 
-    def get_object(self):
-        pkg_name = self.kwargs['name']
-        LOG.info("Get request for package %s." % pkg_name)
+    def get(self, request, name):
+        res = self._get(request, name)
+        serializer = self.serializer_class(res)
+        return Response(data=serializer.data)
+
+    def _get(self, request, name):
+        LOG.info("Get request for package %s." % name)
         try:
-            local_repo = ClonedRepo.objects.get(pk=pkg_name)
-            return local_repo.to_package()
+            local_repo = ClonedRepo.objects.get(pk=name)
+            if hasattr(settings, 'REPO_URL'):
+                repo_url = settings.REPO_URL
+            else:
+                hostname = self._parse_hostname(request.get_host())
+                repo_url = self.DEFAULT_GIT_REPO_PAT.format(hostname)
+            return local_repo.to_package(repo_url)
         except ClonedRepo.DoesNotExist:
             pass
 
         try:
-            return self.model.objects.get(name=pkg_name)
+            return Package.objects.get(name=name)
         except Package.DoesNotExist:
             pass
 
-        return PackagesRetrieveView.clone_from_upstream(pkg_name)
+        if hasattr(settings, 'REPO_URL'):
+            repo_url = settings.REPO_URL
+        else:
+            repo_url = self._parse_hostname(request.get_host()) + '/'
+        return self.clone_from_upstream(name, repo_url)
 
     @staticmethod
-    def clone_from_upstream(pkg_name):
+    def _parse_hostname(full_hostname):
+        """Try parsing out the hostname without the port.
+
+        To be used on Django request's get_host() output."""
+        return full_hostname.split(':')[0]
+
+    @staticmethod
+    def clone_from_upstream(pkg_name, repo_url):
         """Clone a non-existent package using the upstream registry."""
         msg = "Spawning a cloning task for %s from upstream due to API req."
         LOG.info(msg % pkg_name)
@@ -72,4 +94,4 @@ class PackagesRetrieveView(RetrieveAPIView):
             # Not done yet. What to return?
             raise ServiceUnavailable
 
-        return result.to_package()
+        return result.to_package(repo_url)
