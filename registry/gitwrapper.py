@@ -14,7 +14,7 @@ from ._compat import urlparse
 
 LOG = logging.getLogger(__name__)
 
-GIT_PULL_CMD = "git --work-tree={0} --git-dir={0}/.git pull origin master -q"
+GIT_PULL_CMD = "git --work-tree={0} --git-dir={0}/.git pull -q"
 GIT_CLONE_CMD = "git clone {0} {1} -q"
 
 
