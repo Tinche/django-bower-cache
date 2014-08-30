@@ -8,6 +8,7 @@ from django.conf.urls import patterns, url
 from django.contrib import admin, messages
 from django.contrib.admin.views.main import ChangeList
 from django.shortcuts import redirect, get_object_or_404
+from django.views.decorators.http import require_POST
 
 from . import bowerlib
 from .models import ClonedRepo, Package
@@ -39,8 +40,12 @@ class ClonedRepoAdmin(admin.ModelAdmin):
     def get_urls(self):
         urls = super(ClonedRepoAdmin, self).get_urls()
         more_urls = patterns('',
-            url(r'^(.+)/pull/$', self.admin_site.admin_view(self.git_pull_view),
-                                 name='pull')
+            url(r'^(.+)/pull/$',
+                self.admin_site.admin_view(self.git_pull_view),
+                name='pull'),
+            url(r'^update-all$',
+                self.admin_site.admin_view(require_POST(self.update_all_view)),
+                name='update-all'),
         )
         return more_urls + urls
 
@@ -103,6 +108,21 @@ class ClonedRepoAdmin(admin.ModelAdmin):
                           level=messages.SUCCESS)
         return redirect('admin:registry_clonedrepo_change', repo_name)
 
+    def update_all_view(self, request):
+        """Update all repositories and redirect back to the repo list."""
+        LOG.info("Total update requested.")
+        total_count = errors = 0
+        for repo in self.model.objects.all():
+            total_count += 1
+            try:
+                repo.pull()
+            except:
+                LOG.exception('While updating %s.' % repo)
+                errors += 1
+        msg = "{0} repos successfully updated, {1} failed.".format(total_count,
+                                                                   errors)
+        self.message_user(request, msg, level=messages.SUCCESS)
+        return redirect('admin:registry_clonedrepo_changelist')
 
 class NewRepoForm(forms.ModelForm):
     """A special form for creating cloned repositories."""

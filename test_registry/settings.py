@@ -12,7 +12,7 @@ SECRET_KEY = 'r30*fwaj6#%^*_i@@ges__+4g$79-v=dd5a^l75$%_b@35m^yu'
 BROKER_URL = 'django://'
 CELERYBEAT_SCHEDULER = "djcelery.schedulers.DatabaseScheduler"
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),

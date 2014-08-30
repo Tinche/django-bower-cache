@@ -1,4 +1,6 @@
 """Tests for the admin additions."""
+from django.core.urlresolvers import reverse
+from mock import MagicMock
 import re
 from test_registry._compat import mock
 
@@ -167,3 +169,27 @@ def test_add_repo_bower_clueless(get_package, admin_client):
     assert resp.status_code == 200
     soup = BeautifulSoup(resp.content)
     assert 'Upstream registry has no knowledge' in soup.get_text()
+
+
+@mock.patch('registry.models.ClonedRepo.objects')
+def test_cloned_repo_update_all(objects, admin_client):
+    """Test cloned repo view - update all functionality.
+
+    This test doesn't reach out to external services.
+    """
+    resp = admin_client.get('/admin/registry/clonedrepo/')
+    assert resp.status_code == 200
+
+    assert b'Update all repos' in resp.content
+
+    # Now add a package through the form.
+    mocks = [MagicMock(), MagicMock(), MagicMock()]
+    mocks[2].pull.side_effect = IOError()
+    objects.all.return_value = mocks
+    url = reverse('admin:update-all')
+    post_resp = admin_client.post(url, follow=True)
+
+    for mock in mocks:
+        mock.pull.assert_called_once_with()
+
+    assert post_resp.status_code == 200
