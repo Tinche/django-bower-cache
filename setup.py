@@ -52,7 +52,7 @@ class Coverage(TestCommand):
 install_requires = [
     'Django >= 1.6, < 1.7',
     'djangorestframework >= 2.3.12, < 2.5',
-    'envoy >= 0.0.2',
+    'envoy >= 0.0.3',
     'requests >= 2.3.0, < 2.5.0',
     'celery >= 3.1.11, < 3.2',
 ]
@@ -93,6 +93,8 @@ setup(
         "Programming Language :: Python :: 2",
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: Implementation :: PyPy',
     ],
 )
