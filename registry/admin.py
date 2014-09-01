@@ -124,6 +124,7 @@ class ClonedRepoAdmin(admin.ModelAdmin):
         self.message_user(request, msg, level=messages.SUCCESS)
         return redirect('admin:registry_clonedrepo_changelist')
 
+
 class NewRepoForm(forms.ModelForm):
     """A special form for creating cloned repositories."""
     origin_url = forms.CharField(required=False)

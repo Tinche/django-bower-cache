@@ -1,8 +1,7 @@
 """Tests for the admin additions."""
 from django.core.urlresolvers import reverse
-from mock import MagicMock
 import re
-from test_registry._compat import mock
+from test_registry._compat import mock, MagicMock
 
 import os.path
 
@@ -106,6 +105,7 @@ def test_add_repo_no_origin(tmpdir, settings, admin_client):
     soup = BeautifulSoup(resp.content)
     assert 'Please provide an origin URL' in soup.get_text()
 
+
 @mock.patch('registry.models.clone_from')
 def test_add_git_error(clone_from, tmpdir, settings, admin_client):
     """Test submitting a cloned repo, the clone of which fails due to a git
@@ -172,11 +172,12 @@ def test_add_repo_bower_clueless(get_package, admin_client):
 
 
 @mock.patch('registry.models.ClonedRepo.objects')
-def test_cloned_repo_update_all(objects, admin_client):
+def test_cloned_repo_update_all(objects, tmpdir, settings, admin_client):
     """Test cloned repo view - update all functionality.
 
     This test doesn't reach out to external services.
     """
+    settings.REPO_ROOT = str(tmpdir)
     resp = admin_client.get('/admin/registry/clonedrepo/')
     assert resp.status_code == 200
 
