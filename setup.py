@@ -65,7 +65,7 @@ tests_require = [
 ]
 
 if sys.version_info[0] == 2:
-    install_requires.append('configparser==3.3.0r2')
+    install_requires.append('configparser==3.5.0b1')
     tests_require.append('mock==1.0.1')
 
 setup(
