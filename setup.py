@@ -51,7 +51,7 @@ class Coverage(TestCommand):
 
 install_requires = [
     'Django >= 1.6, < 1.7',
-    'djangorestframework >= 2.3.12, < 3.1',
+    'djangorestframework >= 2.3.12, < 3.0',
     'envoy >= 0.0.3',
     'requests >= 2.3.0, < 2.6.0',
     'celery >= 3.1.11, < 3.2',
@@ -65,7 +65,7 @@ tests_require = [
 ]
 
 extras_require = {
-    'python_version == "2.6" or python_version == "2.7"': ['configparser==3.5.0b2']
+    ':python_version == "2.6" or python_version == "2.7"': ['configparser==3.3.0post2']
 }
 
 if sys.version_info[0] == 2:
