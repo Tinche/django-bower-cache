@@ -51,9 +51,9 @@ class Coverage(TestCommand):
 
 install_requires = [
     'Django >= 1.6, < 1.7',
-    'djangorestframework >= 2.3.12, < 2.5',
+    'djangorestframework >= 2.3.12, < 3.1',
     'envoy >= 0.0.3',
-    'requests >= 2.3.0, < 2.5.0',
+    'requests >= 2.3.0, < 2.6.0',
     'celery >= 3.1.11, < 3.2',
 ]
 
@@ -64,8 +64,11 @@ tests_require = [
     'django-celery',
 ]
 
+extras_require = {
+    'python_version == "2.6" or python_version == "2.7"': ['configparser==3.5.0b2']
+}
+
 if sys.version_info[0] == 2:
-    install_requires.append('configparser==3.5.0b1')
     tests_require.append('mock==1.0.1')
 
 setup(
@@ -80,6 +83,7 @@ setup(
     include_package_data=True,
     install_requires=install_requires,
     tests_require=tests_require,
+    extras_require=extras_require,
     cmdclass={'test': PyTest, 'coverage': Coverage},
     license="MIT",
     zip_safe=False,
