@@ -65,7 +65,7 @@ tests_require = [
 ]
 
 extras_require = {
-    ':python_version == "2.6" or python_version == "2.7"': ['configparser==3.3.0post2']
+    ':python_version == "2.6" or python_version == "2.7"': ['configparser==3.5.0b2']
 }
 
 if sys.version_info[0] == 2:
