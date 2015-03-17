@@ -53,7 +53,7 @@ install_requires = [
     'Django >= 1.6, < 1.7',
     'djangorestframework >= 2.3.12, < 3.0',
     'envoy >= 0.0.3',
-    'requests >= 2.3.0, < 2.6.0',
+    'requests >= 2.6.0, < 2.7.0',
     'celery >= 3.1.11, < 3.2',
 ]
 
